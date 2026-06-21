@@ -101,7 +101,7 @@ public class LoginFragment extends Fragment {
         // Ir a registro
         btnRegister.setOnClickListener(v -> getParentFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragmentContainer, new RegisterFragment())
+                .replace(R.id.mainFrame, new RegisterFragment())
                 .commit());
 
         // Login con Google
@@ -149,7 +149,7 @@ public class LoginFragment extends Fragment {
         if (user != null) {
             Toast.makeText(getContext(),
                     "¡Bienvenido " + user.getDisplayName() + "!", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(requireContext(), SessionActivity.class));
+            startActivity(new Intent(requireActivity(), SessionActivity.class));
             requireActivity().finish();
         } else {
             txtEmail.setText("");
