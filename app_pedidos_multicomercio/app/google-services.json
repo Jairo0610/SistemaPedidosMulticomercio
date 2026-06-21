@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1023844229707-ljbhki4l14d2ptg9pjvhvehkur7mk3of.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app_pedidos_multicomercio",
+            "certificate_hash": "0644d4650f1eb23255caf4f522190e363fcf5ed8"
+          }
+        },
+        {
           "client_id": "1023844229707-uh0a0armque86phkd38fjbadnqv3er2e.apps.googleusercontent.com",
           "client_type": 3
         }

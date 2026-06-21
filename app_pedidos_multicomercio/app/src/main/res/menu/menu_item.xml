@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/btnInicio"
+        android:title="Inicio"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:enabled="true"/>
+    <item android:id="@+id/btnCarrito"
+        android:title="Carrito"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:enabled="true"/>
+    <item android:id="@+id/btnPedidos"
+        android:title="Pedidos"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:enabled="true"/>
+    <item android:id="@+id/btnPerfil"
+        android:title="Perfil"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:enabled="true"/>
+</menu>

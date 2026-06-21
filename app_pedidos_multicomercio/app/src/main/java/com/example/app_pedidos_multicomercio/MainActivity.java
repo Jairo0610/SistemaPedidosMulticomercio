@@ -21,14 +21,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //Verifica si el usuario ya esta autentificado
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null){
-            Intent intent = new Intent(this, SessionActivity.class);
-            startActivity(intent);
+            //Intent intent = new Intent(this, SessionActivity.class);
+            //startActivity(intent);
         }
         else {
             cargarVista(new LoginFragment());
         }
+        cargarVista(new LoginFragment());
     }
 
     @Override
