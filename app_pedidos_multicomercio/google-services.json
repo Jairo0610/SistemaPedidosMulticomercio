@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1023844229707",
+    "project_id": "app-pedidos-multicomercio",
+    "storage_bucket": "app-pedidos-multicomercio.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1023844229707:android:dd0d9a338ffa7057fee3ce",
+        "android_client_info": {
+          "package_name": "com.example.app_pedidos_multicomercio"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaE1heoaOgQGzniylnRXHz8ueEpeXyA-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">app_pedidos_multicomercio</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="client_id">1023844229707-uh0a0armque86phkd38fjbadnqv3er2e.apps.googleusercontent.com</string>
 </resources>
