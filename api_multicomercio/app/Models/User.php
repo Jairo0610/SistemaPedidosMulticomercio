@@ -51,4 +51,46 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Solo aplica si el rol del usuario es 'empresa', un usuario gestiona una sola empresa
+    public function empresa()
+    {
+        return $this->hasOne(Empresa::class);
+    }
+
+    // Historial de compras del cliente
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class);
+    }
+
+    // Lista de direcciones del cliente para entrega a domicilio
+    public function direcciones()
+    {
+        return $this->hasMany(Direccion::class);
+    }
+
+    // Reseñas que el cliente ha dejado en productos
+    public function calificaciones()
+    {
+        return $this->hasMany(Calificacion::class);
+    }
+
+    // Productos marcados como favoritos por el cliente
+    public function favoritos()
+    {
+        return $this->hasMany(Favorito::class);
+    }
+
+    // Notificaciones push recibidas (cambios de estado de pedidos)
+    public function notificaciones()
+    {
+        return $this->hasMany(Notificacion::class);
+    }
+
+    // Dispositivos registrados para envío de notificaciones FCM
+    public function dispositivos()
+    {
+        return $this->hasMany(Dispositivo::class);
+    }
 }
