@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Notificacion extends Model
 {
+    protected $table = 'notificaciones';
+
     const UPDATED_AT = null;
     protected $fillable = [
         'user_id',

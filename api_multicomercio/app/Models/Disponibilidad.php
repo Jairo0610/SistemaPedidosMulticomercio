@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Disponibilidad extends Model
 {
+    protected $table = 'disponibilidad';
+
     protected $fillable = [
         'sucursal_id',
         'producto_id',

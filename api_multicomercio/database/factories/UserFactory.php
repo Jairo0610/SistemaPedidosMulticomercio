@@ -25,12 +25,29 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'firebase_uid' => null,
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'telefono' => fake()->numerify('7###-####'),
+            'foto_url' => null,
+            'rol' => 'cliente',
+            'fecha_nacimiento' => fake()->dateTimeBetween('-60 years', '-18 years')->format('Y-m-d'),
+            'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ];
+    }
+
+    /**
+     * Cliente que inicia sesión con Google/Firebase: tiene firebase_uid y no usa contraseña.
+     */
+    public function cliente(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'firebase_uid' => 'firebase_' . fake()->unique()->uuid(),
+            'password' => null,
+            'rol' => 'cliente',
+        ]);
     }
 
     /**

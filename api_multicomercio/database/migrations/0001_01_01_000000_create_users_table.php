@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('telefono',20)->nullable();
             $table->string('foto_url',500)->nullable();
             $table->enum('rol', ['cliente', 'empresa','admin'])->default('cliente');
+            $table->date('fecha_nacimiento')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
