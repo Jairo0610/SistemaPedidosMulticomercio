@@ -56,6 +56,7 @@ public class InicioFragment extends Fragment {
         rvEmpresas.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
         cargarDatosEmpresa();
+
         // Inflate the layout for this fragment
         return view;
     }
@@ -67,30 +68,28 @@ public class InicioFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     dataEmpresa = response.body();
                     Log.i("Empresa", "" + dataEmpresa.size());
-                }
-                ApiClient.getApiService().getCategorias().enqueue(new Callback<List<Categoria>>() {
-                    @Override
-                    public void onResponse(Call<List<Categoria>> call, Response<List<Categoria>> response) {
-                        if (!isAdded()) return;
-                        if (response.isSuccessful() && response.body() != null) {
-                            dataCategoria = response.body();
 
-                            empresaAdapter = new EmpresaAdapter(requireActivity(), dataEmpresa, dataCategoria);
-
-                            rvEmpresas.setAdapter(empresaAdapter);
+                    ApiClient.getApiService().getCategorias().enqueue(new Callback<List<Categoria>>() {
+                        @Override
+                        public void onResponse(Call<List<Categoria>> call, Response<List<Categoria>> response) {
+                            if (!isAdded()) return;
+                            if (response.isSuccessful() && response.body() != null) {
+                                dataCategoria = response.body();
+                                Log.i("Categoria", "" + dataCategoria.size());
+                                empresaAdapter = new EmpresaAdapter(requireActivity(), dataEmpresa, dataCategoria);
+                                rvEmpresas.setAdapter(empresaAdapter);
+                            }
                         }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<Categoria>> call, Throwable throwable) {
-
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<List<Categoria>> call, Throwable throwable) {
+                            Log.e("Categoria", "Error al cargar", throwable);
+                        }
+                    });
+                }
             }
-
             @Override
             public void onFailure(Call<List<Empresa>> call, Throwable throwable) {
-
+                Log.e("Empresa", "Error al cargar", throwable);
             }
         });
     }
