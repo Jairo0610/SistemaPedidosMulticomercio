@@ -1,6 +1,7 @@
 package com.example.app_pedidos_multicomercio;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,15 +10,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class PerfilFragment extends Fragment {
 
+    private FirebaseAuth auth;
+    private  FirebaseUser user;
     private Button btnCerrarSession;
+    private TextView txtNombrePerfil, txtCorreoPerfil;
+    private ImageView imgPerfil;
 
     public PerfilFragment() {
         // Required empty public constructor
@@ -40,7 +50,25 @@ public class PerfilFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_perfil, container, false);
 
+        auth = FirebaseAuth.getInstance();
+
+        user = auth.getCurrentUser();
+
         btnCerrarSession = view.findViewById(R.id.btnCerrarSesion);
+
+        txtNombrePerfil = view.findViewById(R.id.txtNombrePerfil);
+        txtCorreoPerfil = view.findViewById(R.id.txtCorreoPerfil);
+        imgPerfil = view.findViewById(R.id.imgFotoPerfil);
+
+        txtNombrePerfil.setText(user.getDisplayName());
+        txtCorreoPerfil.setText(user.getEmail());
+
+        Glide.with(requireActivity())
+                .load(user.getPhotoUrl().toString())
+                .transform(new RoundedCorners(24))
+                .circleCrop()
+                .placeholder(R.drawable.img_perfil_default)
+                .into(imgPerfil);
 
         btnCerrarSession.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
