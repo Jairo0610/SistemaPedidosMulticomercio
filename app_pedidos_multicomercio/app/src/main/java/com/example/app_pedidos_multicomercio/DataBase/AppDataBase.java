@@ -7,12 +7,12 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.app_pedidos_multicomercio.DAOS.productoDAO;
-import com.example.app_pedidos_multicomercio.Entitys.Producto;
+import com.example.app_pedidos_multicomercio.Entitys.ProductoEntity;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = Producto.class, version = 1, exportSchema = true)
+@Database(entities = ProductoEntity.class, version = 1, exportSchema = true)
 public abstract class AppDataBase extends RoomDatabase {
     public abstract productoDAO producto_dao();
 

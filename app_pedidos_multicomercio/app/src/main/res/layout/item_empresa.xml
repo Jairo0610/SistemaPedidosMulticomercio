@@ -24,8 +24,8 @@
                 android:id="@+id/imgComercio"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                tools:src="@tools:sample/backgrounds/scenic" />
+                android:scaleType="fitCenter"
+                tools:src="@drawable/tienda" />
 
             <!-- Badge (Popular / Envío gratis / etc.) -->
 
@@ -106,24 +106,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginEnd="3dp"
-                        android:src="@android:drawable/ic_menu_recent_history"
-                        android:tint="@color/on_surface_variant" />
-
-                    <TextView
-                        android:id="@+id/txtTiempoEntrega"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textColor="@color/on_surface_variant"
-                        tools:text="25–35 min" />
-
-                </LinearLayout>
+                    android:gravity="center_vertical"/>
 
             </LinearLayout>
 
