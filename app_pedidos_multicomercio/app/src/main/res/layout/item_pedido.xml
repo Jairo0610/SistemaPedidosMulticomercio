@@ -155,13 +155,6 @@
                 android:gravity="center"
                 android:padding="14dp">
 
-                <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:layout_marginEnd="6dp"
-                    android:src="@android:drawable/arrow_up_float"
-                    android:tint="@color/brand_orange" />
-
                 <TextView
                     android:id="@+id/txtAccionPrimaria"
                     android:layout_width="wrap_content"
@@ -170,6 +163,14 @@
                     android:textStyle="bold"
                     android:textColor="@color/brand_orange"
                     tools:text="Seguir pedido" />
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginEnd="6dp"
+                    android:src="@drawable/ic_flecha"
+                    android:tint="@color/brand_orange" />
 
             </LinearLayout>
 

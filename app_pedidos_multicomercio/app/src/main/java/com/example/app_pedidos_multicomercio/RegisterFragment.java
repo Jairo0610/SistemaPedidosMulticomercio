@@ -121,7 +121,6 @@ public class RegisterFragment extends Fragment {
 
         txtNombre = view.findViewById(R.id.txtNombreRegistrar);
         txtFechaNacimiento = view.findViewById(R.id.txtFechaNacimientoRegistrar);
-        txtEmail = view.findViewById(R.id.txtEmailRegistrar);
         txtClave = view.findViewById(R.id.txtClaveRegistrar);
         txtConfirmarClave = view.findViewById(R.id.txtConfirmarClaveRegistrar);
 
