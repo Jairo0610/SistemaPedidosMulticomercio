@@ -1,8 +1,6 @@
 package com.example.app_pedidos_multicomercio;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.FrameLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +23,6 @@ public class SessionActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        cargarFragment(new InicioFragment());
     }
 
     private void cargarFragment (Fragment fragment){
@@ -55,16 +52,12 @@ public class SessionActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        userSession = mAuth.getCurrentUser();
-
-        Log.i("Datos usuario",
-                userSession.getDisplayName().toString() + " " +
-                        userSession.getEmail().toString() + " " +
-                        userSession.getPhoneNumber());
 
         //db_conn = AppDataBase.getInstance(getApplicationContext());
 
         navigationView = findViewById(R.id.navegationSession);
+
+        cargarFragment(new InicioFragment());
 
         navigationView.setOnItemSelectedListener(menuItem -> {
             if (menuItem.getItemId() == R.id.btnInicioSession){

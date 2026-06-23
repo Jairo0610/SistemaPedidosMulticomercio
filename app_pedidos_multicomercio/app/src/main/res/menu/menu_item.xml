@@ -2,18 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/btnInicioSession"
         android:title="Inicio"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/icon_inicio"
         android:enabled="true"/>
     <item android:id="@+id/btnCarritoSession"
         android:title="Carrito"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/icon_carrito"
         android:enabled="true"/>
     <item android:id="@+id/btnPedidosSession"
         android:title="Pedidos"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/icon_pedido"
         android:enabled="true"/>
     <item android:id="@+id/btnPerfilSession"
         android:title="Perfil"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/icon_usuario"
         android:enabled="true"/>
 </menu>

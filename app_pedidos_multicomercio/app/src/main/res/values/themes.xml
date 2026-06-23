@@ -1,9 +1,253 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.App_pedidos_multicomercio" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ════════════════════════════════════════════
+         BASE THEME — Tema claro único
+         Hereda de Material3 Light sin ActionBar
+         para control total de la TopAppBar
+    ════════════════════════════════════════════ -->
+    <style name="Base.Theme.App_pedidos_multicomercio" parent="Theme.Material3.Light.NoActionBar">
+
+        <!-- ── Color primario (Naranja acción) ── -->
+        <item name="colorPrimary">@color/brand_orange</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/brand_orange_container</item>
+        <item name="colorOnPrimaryContainer">@color/brand_orange_on_container</item>
+
+        <!-- ── Color secundario (Verde disponibilidad) ── -->
+        <item name="colorSecondary">@color/brand_green</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/brand_green_container</item>
+        <item name="colorOnSecondaryContainer">@color/brand_green_on_container</item>
+
+        <!-- ── Color terciario (Azul seguimiento) ── -->
+        <item name="colorTertiary">@color/brand_blue</item>
+        <item name="colorOnTertiary">@color/white</item>
+        <item name="colorTertiaryContainer">@color/brand_blue_container</item>
+        <item name="colorOnTertiaryContainer">@color/brand_blue_on_container</item>
+
+        <!-- ── Error ── -->
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="colorErrorContainer">@color/error_container</item>
+        <item name="colorOnErrorContainer">@color/error_on_container</item>
+
+        <!-- ── Fondo y superficie ── -->
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorOnBackground">@color/on_background</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/on_surface_variant</item>
+
+        <!-- ── Contornos ── -->
+        <item name="colorOutline">@color/outline</item>
+        <item name="colorOutlineVariant">@color/outline_variant</item>
+
+        <!-- ── Elevation / Contenedores de superficie ── -->
+        <item name="colorSurfaceContainerLowest">@color/surface_container_lowest</item>
+        <item name="colorSurfaceContainerLow">@color/surface_container_low</item>
+        <item name="colorSurfaceContainer">@color/surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/surface_container_highest</item>
+
+        <!-- ── Ripple global ── -->
+        <item name="colorControlHighlight">@color/ripple_orange</item>
+
+        <!-- ── Tipografía ── -->
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+
+        <!-- ── Status bar y navigation bar ── -->
+        <item name="android:statusBarColor">@color/brand_orange</item>
+        <item name="android:navigationBarColor">@color/surface</item>
+
     </style>
 
+    <!-- Tema principal de la app -->
     <style name="Theme.App_pedidos_multicomercio" parent="Base.Theme.App_pedidos_multicomercio" />
+
+
+    <!-- ════════════════════════════════════════════
+         TopAppBar — Naranja con íconos blancos
+    ════════════════════════════════════════════ -->
+    <style name="Widget.App.TopAppBar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/brand_orange</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="subtitleTextColor">@color/brand_orange_container</item>
+        <item name="navigationIconTint">@color/white</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+
+    <!-- ════════════════════════════════════════════
+         Botones
+    ════════════════════════════════════════════ -->
+
+    <!-- Botón primario (Filled) -->
+    <style name="Widget.App.Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/brand_orange</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="rippleColor">@color/ripple_on_orange</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+    </style>
+
+    <!-- Botón secundario (Outlined) -->
+    <style name="Widget.App.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/brand_orange</item>
+        <item name="android:textColor">@color/brand_orange</item>
+        <item name="rippleColor">@color/ripple_orange</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+    <!-- Botón de texto (acción suave) -->
+    <style name="Widget.App.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/brand_orange</item>
+        <item name="rippleColor">@color/ripple_orange</item>
+    </style>
+
+
+    <!-- ════════════════════════════════════════════
+         TextInputLayout
+    ════════════════════════════════════════════ -->
+    <style name="Widget.App.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/brand_orange</item>
+        <item name="hintTextColor">@color/brand_orange</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="boxStrokeErrorColor">@color/error</item>
+        <item name="android:textColorHint">@color/hint</item>
+    </style>
+
+
+    <!-- ════════════════════════════════════════════
+         Cards
+    ════════════════════════════════════════════ -->
+
+    <!-- Card estándar (tiendas, productos) -->
+    <style name="Widget.App.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/surface</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="strokeColor">@color/outline_variant</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- Card de pedido/estado -->
+    <style name="Widget.App.Card.Order" parent="Widget.App.Card">
+        <item name="cardBackgroundColor">@color/surface_container_low</item>
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">1dp</item>
+    </style>
+
+
+    <!-- ════════════════════════════════════════════
+         BottomNavigationView
+         — itemIconTint e itemTextColor usan
+           ?attr/colorPrimary para el ítem activo
+           y colorOnSurfaceVariant para inactivos,
+           comportamiento nativo de Material3
+    ════════════════════════════════════════════ -->
+    <style name="Widget.App.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
+        <item name="backgroundTint">@color/surface</item>
+        <item name="elevation">8dp</item>
+    </style>
+
+
+    <!-- ════════════════════════════════════════════
+         Chips (categorías de comercio)
+    ════════════════════════════════════════════ -->
+    <style name="Widget.App.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/surface_container</item>
+        <item name="chipStrokeColor">@color/outline_variant</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="android:textColor">@color/on_surface_variant</item>
+        <item name="chipCornerRadius">20dp</item>
+    </style>
+
+
+    <!-- ════════════════════════════════════════════
+         FloatingActionButton
+    ════════════════════════════════════════════ -->
+    <style name="Widget.App.FAB" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="backgroundTint">@color/brand_orange</item>
+        <item name="tint">@color/white</item>
+        <item name="rippleColor">@color/ripple_on_orange</item>
+    </style>
+
+
+    <!-- ════════════════════════════════════════════
+         Tipografías
+    ════════════════════════════════════════════ -->
+
+    <!-- Título de pantalla -->
+    <style name="TextAppearance.App.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">@color/on_background</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <!-- Subtítulo / sección -->
+    <style name="TextAppearance.App.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/on_surface</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- Cuerpo principal -->
+    <style name="TextAppearance.App.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/on_surface</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- Texto de apoyo / secundario -->
+    <style name="TextAppearance.App.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">@color/on_surface_variant</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- Precio / destacado en naranja -->
+    <style name="TextAppearance.App.Price" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/brand_orange</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+
+    <!-- ════════════════════════════════════════════
+         BottomSheet
+    ════════════════════════════════════════════ -->
+    <style name="Widget.App.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.App.BottomSheet</item>
+    </style>
+
+    <style name="Widget.App.BottomSheet" parent="Widget.Material3.BottomSheet">
+        <item name="backgroundTint">@color/surface</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.App.BottomSheet</item>
+    </style>
+
+    <style name="ShapeAppearance.App.BottomSheet" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">24dp</item>
+        <item name="cornerSizeTopRight">24dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+
+    <!-- ════════════════════════════════════════════
+         Snackbar
+    ════════════════════════════════════════════ -->
+    <style name="Widget.App.Snackbar" parent="Widget.Material3.Snackbar">
+        <item name="android:background">@color/on_surface</item>
+        <item name="snackbarButtonStyle">@style/Widget.App.Snackbar.Button</item>
+    </style>
+
+    <style name="Widget.App.Snackbar.Button" parent="Widget.Material3.Button.TextButton.Snackbar">
+        <item name="android:textColor">@color/brand_orange</item>
+    </style>
+
 </resources>

@@ -31,7 +31,7 @@
                     android:background="@drawable/bg_circle_img"
                     android:clipToOutline="true"
                     android:scaleType="centerCrop"
-                    tools:src="@tools:sample/avatars" />
+                    tools:src="@drawable/img_perfil_default" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/btnTomarFotoRegistrar"
