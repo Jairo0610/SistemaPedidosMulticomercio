@@ -16,7 +16,7 @@
         android:theme="@style/Theme.App_pedidos_multicomercio">
         <activity
             android:name=".SessionActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

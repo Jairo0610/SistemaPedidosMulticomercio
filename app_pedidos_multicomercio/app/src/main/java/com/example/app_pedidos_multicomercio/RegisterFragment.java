@@ -112,6 +112,7 @@ public class RegisterFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         imgPerfil = view.findViewById(R.id.imgPerfilRegister);
+        imgPerfil.setImageResource(R.drawable.img_perfil_default);
 
         btnInicioSesion = view.findViewById(R.id.btnViewLogin);
         btnRegister = view.findViewById(R.id.btnUserRegister);

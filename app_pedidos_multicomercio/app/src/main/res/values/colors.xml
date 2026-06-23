@@ -1,5 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+
+    <!-- ── Marca principal: Naranja acción ── -->
+    <color name="brand_orange">#E8500A</color>
+    <color name="brand_orange_container">#FFD9C8</color>
+    <color name="brand_orange_on_container">#5C1A00</color>
+    <color name="brand_orange_dark">#BF3D00</color>
+
+    <!-- ── Secundario: Verde disponibilidad ── -->
+    <color name="brand_green">#1A6B4A</color>
+    <color name="brand_green_container">#C0EDD8</color>
+    <color name="brand_green_on_container">#00210F</color>
+
+    <!-- ── Terciario: Azul seguimiento/pedidos ── -->
+    <color name="brand_blue">#2B4C8C</color>
+    <color name="brand_blue_container">#D6E2FF</color>
+    <color name="brand_blue_on_container">#001945</color>
+
+    <!-- ── Error ── -->
+    <color name="error">#C62828</color>
+    <color name="error_container">#FFDAD6</color>
+    <color name="error_on_container">#410002</color>
+
+    <!-- ── Fondos y superficies ── -->
+    <color name="background">#F5F5F0</color>
+    <color name="on_background">#1A1A1A</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="on_surface">#1A1A1A</color>
+    <color name="surface_variant">#EDE8E2</color>
+    <color name="on_surface_variant">#5C5650</color>
+    <color name="surface_container_lowest">#FFFFFF</color>
+    <color name="surface_container_low">#F6F3EE</color>
+    <color name="surface_container">#F0EDE8</color>
+    <color name="surface_container_high">#E8E4DE</color>
+    <color name="surface_container_highest">#DEDAD4</color>
+
+    <!-- ── Outline ── -->
+    <color name="outline">#9B9188</color>
+    <color name="outline_variant">#CEC4BB</color>
+
+    <!-- ── Base ── -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="hint">#9B9188</color>
+
+    <!-- ── Ripple ── -->
+    <color name="ripple_orange">#1AE8500A</color>
+    <color name="ripple_on_orange">#4DFFFFFF</color>
+
+    <!-- ── Estados de pedido ── -->
+    <!-- Nuevo: azul -->
+    <color name="status_new_bg">#D6E2FF</color>
+    <color name="status_new_text">#001945</color>
+
+    <!-- En preparación: naranja -->
+    <color name="status_preparing_bg">#FFD9C8</color>
+    <color name="status_preparing_text">#5C1A00</color>
+
+    <!-- En camino / listo para retiro: amarillo cálido -->
+    <color name="status_onway_bg">#FFF3CD</color>
+    <color name="status_onway_text">#5C3D00</color>
+
+    <!-- Entregado: verde -->
+    <color name="status_delivered_bg">#C0EDD8</color>
+    <color name="status_delivered_text">#00210F</color>
+
+    <!-- Cancelado: rojo -->
+    <color name="status_cancelled_bg">#FFDAD6</color>
+    <color name="status_cancelled_text">#410002</color>
+
+    <!-- ── Categorías de comercio (icons) ── -->
+    <color name="category_food">#E8500A</color>
+    <color name="category_pharmacy">#1A6B4A</color>
+    <color name="category_tech">#2B4C8C</color>
+    <color name="category_supermarket">#7B5EA7</color>
+    <color name="category_other">#5C5650</color>
+
 </resources>
