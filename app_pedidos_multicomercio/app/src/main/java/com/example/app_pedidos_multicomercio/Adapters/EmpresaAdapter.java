@@ -51,10 +51,12 @@ public class EmpresaAdapter extends RecyclerView.Adapter<EmpresaAdapter.EmpresaV
         holder.txtNombreComercio.setText(empresa.getNombre());
 
 
-        for (Categoria item:
-             dataCategoria) {
-            if (item.getId() == empresa.getCategoriaId()){
-                holder.txtCategoria.setText(item.getNombre());
+        if (dataCategoria != null) {
+            for (Categoria item : dataCategoria) {
+                if (item.getId() == empresa.getCategoriaId()) {
+                    holder.txtCategoria.setText(item.getNombre());
+                    break;
+                }
             }
         }
     }

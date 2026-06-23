@@ -9,7 +9,7 @@ class EmpresaController extends Controller
 {
     public function index()
     {
-        return Empresa::with('sucursales')->get();
+        return response()->json(Empresa::with('sucursales')->get()->take(10));
     }
 
     public function show(Empresa $empresa)
