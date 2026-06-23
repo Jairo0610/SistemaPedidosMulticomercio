@@ -17,7 +17,7 @@
         <!-- Imagen del comercio con badge encima -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp">
+            android:layout_height="120dp">
 
             <!-- Imagen principal -->
             <ImageView
