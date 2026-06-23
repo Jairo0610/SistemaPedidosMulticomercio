@@ -5,20 +5,20 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.app_pedidos_multicomercio.Entitys.Producto;
+import com.example.app_pedidos_multicomercio.Entitys.ProductoEntity;
 
 import java.util.List;
 
 @Dao
 public interface productoDAO {
     @Query("SELECT * FROM productos")
-    List<Producto> getAllProductos();
+    List<ProductoEntity> getAllProductos();
 
     @Insert
-    long insertProducto(Producto producto);
+    long insertProducto(ProductoEntity producto);
 
     @Update
-    int updateProducto(Producto producto);
+    int updateProducto(ProductoEntity producto);
 
     @Query("DELETE FROM productos WHERE idProducto=:idProducto")
     int deleteProducto(int idProducto);

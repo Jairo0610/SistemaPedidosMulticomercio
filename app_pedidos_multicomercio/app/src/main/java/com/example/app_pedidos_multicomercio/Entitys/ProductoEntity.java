@@ -4,7 +4,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "productos")
-public class Producto {
+public class ProductoEntity {
     @PrimaryKey(autoGenerate = false)
     private int idProducto;
     private String refereceProducto;
@@ -13,10 +13,10 @@ public class Producto {
     private int cantidad;
     private double precioUnitario;
 
-    public Producto() {
+    public ProductoEntity() {
     }
 
-    public Producto(int idProducto, String refereceProducto, String imgURL, String nombreProducto, int cantidad, double precioUnitario) {
+    public ProductoEntity(int idProducto, String refereceProducto, String imgURL, String nombreProducto, int cantidad, double precioUnitario) {
         this.idProducto = idProducto;
         this.refereceProducto = refereceProducto;
         this.imgURL = imgURL;
