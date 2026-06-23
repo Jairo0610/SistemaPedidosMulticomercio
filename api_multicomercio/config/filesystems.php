@@ -47,6 +47,17 @@ return [
             'report' => false,
         ],
 
+        'firebase' => [
+            'driver'         => 'gcs',
+            'project_id'     => env('FIREBASE_PROJECT_ID'),
+            'bucket'         => env('FIREBASE_STORAGE_DEFAULT_BUCKET'),
+            'key_file'       => base_path(env('FIREBASE_CREDENTIALS')),
+            'path_prefix'    => '',
+            'visibility'     => 'public',
+            'url'            => 'https://storage.googleapis.com/'.env('FIREBASE_STORAGE_DEFAULT_BUCKET'),
+            'throw'          => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
