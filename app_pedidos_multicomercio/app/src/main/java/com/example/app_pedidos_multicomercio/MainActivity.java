@@ -19,32 +19,30 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        //Verifica si el usuario ya esta autentificado
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null){
-            //Intent intent = new Intent(this, SessionActivity.class);
-            //startActivity(intent);
-        }
-        else {
-            cargarVista(new LoginFragment());
-        }
-        cargarVista(new LoginFragment());
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            Insets imeInsets  = insets.getInsets(WindowInsetsCompat.Type.ime());
+            v.setPadding(
+                    systemBars.left, systemBars.top, systemBars.right, Math.max(systemBars.bottom, imeInsets.bottom)
+            );
             return insets;
         });
 
         mAuth = FirebaseAuth.getInstance();
+
+        //Verificando si el usuario ya esta autentificado
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null){
+            Intent intent = new Intent(this, SessionActivity.class);
+            startActivity(intent);
+        }
+        else {
+            cargarVista(new LoginFragment());
+        }
     }
 
     private void cargarVista(Fragment fragment){
