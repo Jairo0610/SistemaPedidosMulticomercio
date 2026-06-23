@@ -1,6 +1,7 @@
 package com.example.app_pedidos_multicomercio;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import androidx.activity.EdgeToEdge;
@@ -10,9 +11,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.app_pedidos_multicomercio.DataBase.AppDataBase;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SessionActivity extends AppCompatActivity {
+    private FirebaseAuth mAuth;
+    private FirebaseUser userSession;
+    private AppDataBase db_conn;
     private BottomNavigationView navigationView;
 
     @Override
@@ -36,6 +43,26 @@ public class SessionActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        getOnBackPressedDispatcher().addCallback(this,
+                new androidx.activity.OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        finishAffinity();
+                    }
+                }
+        );
+
+        mAuth = FirebaseAuth.getInstance();
+
+        userSession = mAuth.getCurrentUser();
+
+        Log.i("Datos usuario",
+                userSession.getDisplayName().toString() + " " +
+                        userSession.getEmail().toString() + " " +
+                        userSession.getPhoneNumber());
+
+        //db_conn = AppDataBase.getInstance(getApplicationContext());
 
         navigationView = findViewById(R.id.navegationSession);
 

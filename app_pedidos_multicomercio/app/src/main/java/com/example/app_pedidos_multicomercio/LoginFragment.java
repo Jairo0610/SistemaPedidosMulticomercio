@@ -40,6 +40,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
@@ -48,7 +49,6 @@ import java.util.concurrent.Executors;
 public class LoginFragment extends Fragment {
 
     private static final int RC_SIGN_IN = 100;
-
     private FirebaseAuth mAuth;
     private GoogleSignInClient googleSignInClient;
     private TextInputEditText txtEmail, txtPass;
@@ -78,10 +78,11 @@ public class LoginFragment extends Fragment {
 
         // Login con email/contraseña
         btnLogin.setOnClickListener(v -> {
-            String email = txtEmail.getText().toString().trim();
-            String pass  = txtPass.getText().toString().trim();
+            String email = txtEmail.getText().toString();
+            String pass  = txtPass.getText().toString();
 
             if (!email.isEmpty() && !pass.isEmpty()) {
+
                 mAuth.signInWithEmailAndPassword(email, pass)
                         .addOnCompleteListener(requireActivity(), task -> {
                             if (task.isSuccessful()) {
@@ -124,7 +125,6 @@ public class LoginFragment extends Fragment {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
-                Log.w(TAG, "Google sign in failed", e);
                 Toast.makeText(getContext(),
                         "Error Google: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -132,11 +132,34 @@ public class LoginFragment extends Fragment {
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth.signInWithCredential(credential)
+        AuthCredential googleCredential = GoogleAuthProvider.getCredential(idToken, null);
+
+        mAuth.signInWithCredential(googleCredential)
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         updateUI(mAuth.getCurrentUser());
+                    } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+
+                        // El email ya existe con email/password
+                        // Obtenemos el email desde la cuenta de Google
+                        FirebaseAuthUserCollisionException collision =
+                                (FirebaseAuthUserCollisionException) task.getException();
+                        String emailEnConflicto = collision.getEmail();
+
+                        // Buscar con qué proveedor está registrado ese email
+                        mAuth.fetchSignInMethodsForEmail(emailEnConflicto)
+                                .addOnCompleteListener(fetchTask -> {
+                                    if (fetchTask.isSuccessful()) {
+                                        java.util.List<String> metodos =
+                                                fetchTask.getResult().getSignInMethods();
+
+                                        if (metodos != null && metodos.contains("password")) {
+                                            // Está registrado con email/pass
+                                            // Pedimos la contraseña al usuario para vincular
+                                            pedirContrasenaParaVincular(emailEnConflicto, googleCredential);
+                                        }
+                                    }
+                                });
                     } else {
                         Log.w(TAG, "signInWithCredential:failure", task.getException());
                         Toast.makeText(getContext(),
@@ -145,15 +168,65 @@ public class LoginFragment extends Fragment {
                 });
     }
 
+    private void pedirContrasenaParaVincular(String email, AuthCredential googleCredential) {
+        // Mostramos un dialogo pidiendo la contraseña
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+        builder.setTitle("Vincular cuenta");
+        builder.setMessage("El correo " + email + " ya está registrado.\nIngresa tu contraseña para vincular tu cuenta de Google.");
+
+        android.widget.EditText inputPass = new android.widget.EditText(requireContext());
+        inputPass.setInputType(android.text.InputType.TYPE_CLASS_TEXT |
+                android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        inputPass.setHint("Contraseña");
+        builder.setView(inputPass);
+
+        builder.setPositiveButton("Vincular", (dialog, which) -> {
+            String password = inputPass.getText().toString().trim();
+            if (!password.isEmpty()) {
+                // Iniciar sesión con email/pass y luego vincular Google
+                mAuth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(requireActivity(), loginTask -> {
+                            if (loginTask.isSuccessful()) {
+                                // Vincular Google a la cuenta existente
+                                mAuth.getCurrentUser()
+                                        .linkWithCredential(googleCredential)
+                                        .addOnCompleteListener(linkTask -> {
+                                            if (linkTask.isSuccessful()) {
+                                                Toast.makeText(getContext(),
+                                                        "¡Cuentas vinculadas! Ahora puedes usar ambos métodos.",
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                            // Navegar igual aunque falle el link
+                                            updateUI(mAuth.getCurrentUser());
+                                        });
+                            } else {
+                                Toast.makeText(getContext(),
+                                        "Contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
+
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+        builder.show();
+    }
+
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             Toast.makeText(getContext(),
                     "¡Bienvenido " + user.getDisplayName() + "!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(requireActivity(), SessionActivity.class));
-            requireActivity().finish();
         } else {
             txtEmail.setText("");
             txtPass.setText("");
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mAuth.getCurrentUser() != null){
+            requireActivity().finish();
         }
     }
 }

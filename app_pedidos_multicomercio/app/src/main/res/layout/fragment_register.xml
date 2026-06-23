@@ -19,26 +19,38 @@
             android:gravity="center_horizontal">
 
             <FrameLayout
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="32dp">
 
                 <ImageView
-                    android:id="@+id/imgProfileRegister"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:scaleType="centerCrop"
+                    android:id="@+id/imgPerfilRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_circle_img"
                     android:clipToOutline="true"
+                    android:scaleType="centerCrop"
                     tools:src="@tools:sample/avatars" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/btnPickImageRegister"
+                    android:id="@+id/btnTomarFotoRegistrar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|start"
+                    android:contentDescription="Seleccionar foto de perfil"
+                    app:srcCompat="@android:drawable/ic_menu_camera"
+                    app:fabSize="mini"
+                    app:backgroundTint="#FF5C00"
+                    app:tint="@android:color/white"
+                    app:elevation="4dp" />
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/btnElgirFotoRegistrar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|end"
                     android:contentDescription="Seleccionar foto de perfil"
-                    app:srcCompat="@android:drawable/ic_menu_camera"
+                    app:srcCompat="@android:drawable/ic_menu_report_image"
                     app:fabSize="mini"
                     app:backgroundTint="#FF5C00"
                     app:tint="@android:color/white"
@@ -46,7 +58,6 @@
 
             </FrameLayout>
 
-            <!-- Nombre -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -55,7 +66,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtNameUserRegister"
+                    android:id="@+id/txtNombreRegistrar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPersonName"
@@ -70,7 +81,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtEmailUserRegister"
+                    android:id="@+id/txtEmailRegistrar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
@@ -81,11 +92,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:hint="Fecha de nacimiento"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:endIconMode="custom"
+                app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                app:placeholderText="DD/MM/AAAA">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtFechaNacimientoRegistrar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:cursorVisible="false" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:hint="Teléfono"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtPhoneUserRegister"
+                    android:id="@+id/txtTelefonoRegistrar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="phone"
@@ -101,7 +133,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtPassUserRegister"
+                    android:id="@+id/txtClaveRegistrar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
@@ -117,7 +149,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtPassConfirmUserRegister"
+                    android:id="@+id/txtConfirmarClaveRegistrar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
