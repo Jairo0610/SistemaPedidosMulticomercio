@@ -14,6 +14,16 @@ public interface productoDAO {
     @Query("SELECT * FROM productos")
     List<ProductoEntity> getAllProductos();
 
+    @Query("SELECT * FROM productos WHERE idProducto=:idProducto")
+    ProductoEntity getProductoById(int idProducto);
+
+    @Query("SELECT COUNT(*) FROM productos")
+    int contarProductos();
+
+    // empresa del carrito (todos los items son de la misma); null si está vacío.
+    @Query("SELECT empresaId FROM productos LIMIT 1")
+    Integer getEmpresaEnCarrito();
+
     @Insert
     long insertProducto(ProductoEntity producto);
 
@@ -23,4 +33,6 @@ public interface productoDAO {
     @Query("DELETE FROM productos WHERE idProducto=:idProducto")
     int deleteProducto(int idProducto);
 
+    @Query("DELETE FROM productos")
+    int vaciarCarrito();
 }

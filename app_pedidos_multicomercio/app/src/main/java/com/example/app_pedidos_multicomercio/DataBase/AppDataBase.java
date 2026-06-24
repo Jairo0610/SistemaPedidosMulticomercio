@@ -12,7 +12,7 @@ import com.example.app_pedidos_multicomercio.Entitys.ProductoEntity;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = ProductoEntity.class, version = 1, exportSchema = true)
+@Database(entities = ProductoEntity.class, version = 2, exportSchema = true)
 public abstract class AppDataBase extends RoomDatabase {
     public abstract productoDAO producto_dao();
 
@@ -24,7 +24,10 @@ public abstract class AppDataBase extends RoomDatabase {
         if (INSTANCE == null){
             synchronized (AppDataBase.class){
                 if (INSTANCE == null){
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDataBase.class, "db_carrito").build();
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDataBase.class, "db_carrito")
+                            // el carrito es caché desechable, si cambia el esquema, se recrea.
+                            .fallbackToDestructiveMigration(true)
+                            .build();
 
                 }
             }

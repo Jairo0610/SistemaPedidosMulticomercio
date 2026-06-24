@@ -1,0 +1,64 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "61c19dea7d058d810b14f53551d0729a",
+    "entities": [
+      {
+        "tableName": "productos",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idProducto` INTEGER NOT NULL, `empresaId` INTEGER NOT NULL, `refereceProducto` TEXT, `imgURL` TEXT, `nombreProducto` TEXT, `cantidad` INTEGER NOT NULL, `precioUnitario` REAL NOT NULL, PRIMARY KEY(`idProducto`))",
+        "fields": [
+          {
+            "fieldPath": "idProducto",
+            "columnName": "idProducto",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "empresaId",
+            "columnName": "empresaId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "refereceProducto",
+            "columnName": "refereceProducto",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "imgURL",
+            "columnName": "imgURL",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "nombreProducto",
+            "columnName": "nombreProducto",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cantidad",
+            "columnName": "cantidad",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "precioUnitario",
+            "columnName": "precioUnitario",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "idProducto"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '61c19dea7d058d810b14f53551d0729a')"
+    ]
+  }
+}
