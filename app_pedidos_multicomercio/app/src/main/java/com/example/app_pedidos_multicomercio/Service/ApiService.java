@@ -6,6 +6,7 @@ import com.example.app_pedidos_multicomercio.Models.Categoria;
 import com.example.app_pedidos_multicomercio.Models.CrearPedidoResponse;
 import com.example.app_pedidos_multicomercio.Models.Direccion;
 import com.example.app_pedidos_multicomercio.Models.DireccionRequest;
+import com.example.app_pedidos_multicomercio.Models.DispositivoRequest;
 import com.example.app_pedidos_multicomercio.Models.Empresa;
 import com.example.app_pedidos_multicomercio.Models.Pedido;
 import com.example.app_pedidos_multicomercio.Models.PedidoRequest;
@@ -59,4 +60,8 @@ public interface ApiService {
 
     @POST("pedidos/{id}/confirmar-pago")
     Call<Pedido> confirmarPago(@Path("id") int id);
+
+    // notificaciones push (requiere token)
+    @POST("dispositivos")
+    Call<Void> registrarDispositivo(@Body DispositivoRequest body);
 }

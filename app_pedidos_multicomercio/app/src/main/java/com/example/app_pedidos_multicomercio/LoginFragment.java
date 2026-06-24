@@ -31,6 +31,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.example.app_pedidos_multicomercio.Client.ApiClient;
 import com.example.app_pedidos_multicomercio.Models.AuthRequest;
 import com.example.app_pedidos_multicomercio.Models.AuthResponse;
+import com.example.app_pedidos_multicomercio.Util.FcmManager;
 import com.example.app_pedidos_multicomercio.Util.SessionManager;
 
 import retrofit2.Call;
@@ -237,6 +238,9 @@ public class LoginFragment extends Fragment {
 
                             if (response.isSuccessful() && response.body() != null) {
                                 SessionManager.guardarToken(requireContext(), response.body().getToken());
+
+                                // ya con sesión, registrar el token FCM para recibir push
+                                FcmManager.registrarToken();
 
                                 Toast.makeText(getContext(),
                                         "¡Bienvenido " + nombre + "!", Toast.LENGTH_SHORT).show();
