@@ -58,7 +58,9 @@ public class CarritoFragment extends Fragment implements CarritoAdapter.OnCarrit
     private List<Direccion> direcciones = new ArrayList<>();
 
     private PaymentSheet paymentSheet;
-    private int pedidoEnPago = -1;
+    // datos del pago en curso: el pedido aún no existe hasta que Stripe apruebe
+    private PedidoRequest pedidoPendiente;
+    private String paymentIntentId;
 
     public CarritoFragment() { }
 
@@ -247,18 +249,22 @@ public class CarritoFragment extends Fragment implements CarritoAdapter.OnCarrit
             items.add(new ItemPedido(p.getIdProducto(), p.getCantidad()));
         }
 
+        // se guarda el pedido en curso para crearlo solo cuando el pago se apruebe
+        pedidoPendiente = new PedidoRequest(empresaId, direccionId, items);
+
         btnConfirmarPedido.setEnabled(false);
-        ApiClient.getApiService().crearPedido(new PedidoRequest(empresaId, direccionId, items))
+        // paso 1: crear el PaymentIntent (todavía NO se crea el pedido)
+        ApiClient.getApiService().iniciarPago(pedidoPendiente)
                 .enqueue(new Callback<CrearPedidoResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<CrearPedidoResponse> call, @NonNull Response<CrearPedidoResponse> response) {
                         if (!isAdded()) return;
                         btnConfirmarPedido.setEnabled(true);
                         if (response.isSuccessful() && response.body() != null) {
-                            pedidoEnPago = response.body().getPedidoId();
+                            paymentIntentId = response.body().getPaymentIntentId();
                             presentarPago(response.body().getClientSecret());
                         } else {
-                            Toast.makeText(getContext(), "No se pudo crear el pedido (" + response.code() + ")", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "No se pudo iniciar el pago (" + response.code() + ")", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -266,7 +272,7 @@ public class CarritoFragment extends Fragment implements CarritoAdapter.OnCarrit
                     public void onFailure(@NonNull Call<CrearPedidoResponse> call, @NonNull Throwable t) {
                         if (!isAdded()) return;
                         btnConfirmarPedido.setEnabled(true);
-                        Toast.makeText(getContext(), "Error de red al crear el pedido", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error de red al iniciar el pago", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -279,18 +285,21 @@ public class CarritoFragment extends Fragment implements CarritoAdapter.OnCarrit
 
     private void onResultadoPago(PaymentSheetResult result) {
         if (result instanceof PaymentSheetResult.Completed) {
-            confirmarPagoBackend();
+            // paso 2: solo ahora (pago aprobado) se crea el pedido en el backend
+            crearPedidoPagado();
         } else if (result instanceof PaymentSheetResult.Canceled) {
-            Toast.makeText(getContext(), "Pago cancelado", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Pago cancelado, no se creó el pedido", Toast.LENGTH_SHORT).show();
         } else if (result instanceof PaymentSheetResult.Failed) {
-            Toast.makeText(getContext(), "El pago falló. Intenta de nuevo.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "El pago falló, no se creó el pedido", Toast.LENGTH_SHORT).show();
         }
     }
 
-    /* avisa al backend para que verifique el pago en Stripe y marque el pedido como pagado */
-    private void confirmarPagoBackend() {
-        if (pedidoEnPago < 0) return;
-        ApiClient.getApiService().confirmarPago(pedidoEnPago).enqueue(new Callback<Pedido>() {
+    /* crea el pedido en el backend; el backend reverifica el pago en Stripe antes de guardarlo */
+    private void crearPedidoPagado() {
+        if (pedidoPendiente == null || paymentIntentId == null) return;
+        pedidoPendiente.setPaymentIntentId(paymentIntentId);
+
+        ApiClient.getApiService().crearPedido(pedidoPendiente).enqueue(new Callback<Pedido>() {
             @Override
             public void onResponse(@NonNull Call<Pedido> call, @NonNull Response<Pedido> response) {
                 if (!isAdded()) return;
@@ -300,13 +309,13 @@ public class CarritoFragment extends Fragment implements CarritoAdapter.OnCarrit
                     Toast.makeText(getContext(), "¡Pedido realizado con éxito!", Toast.LENGTH_LONG).show();
                     irAPedidos();
                 } else {
-                    Toast.makeText(getContext(), "El pago se hizo pero no se pudo confirmar (" + response.code() + ")", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "El pago se hizo pero no se pudo registrar el pedido (" + response.code() + ")", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Pedido> call, @NonNull Throwable t) {
-                if (isAdded()) Toast.makeText(getContext(), "Error de red al confirmar el pago", Toast.LENGTH_SHORT).show();
+                if (isAdded()) Toast.makeText(getContext(), "Error de red al registrar el pedido", Toast.LENGTH_SHORT).show();
             }
         });
     }

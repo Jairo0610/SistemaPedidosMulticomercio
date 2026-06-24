@@ -61,11 +61,13 @@ public interface ApiService {
     @GET("pedidos")
     Call<List<Pedido>> getPedidos();
 
-    @POST("pedidos")
-    Call<CrearPedidoResponse> crearPedido(@Body PedidoRequest body);
+    // paso 1: crea el PaymentIntent (sin pedido) y devuelve el client_secret
+    @POST("pedidos/intent")
+    Call<CrearPedidoResponse> iniciarPago(@Body PedidoRequest body);
 
-    @POST("pedidos/{id}/confirmar-pago")
-    Call<Pedido> confirmarPago(@Path("id") int id);
+    // paso 2: crea el pedido ya pagado (solo si Stripe aprobó)
+    @POST("pedidos")
+    Call<Pedido> crearPedido(@Body PedidoRequest body);
 
     // notificaciones push (requiere token)
     @POST("dispositivos")
