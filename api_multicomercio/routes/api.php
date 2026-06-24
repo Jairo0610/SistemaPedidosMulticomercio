@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DireccionController;
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,4 +27,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // libreta de direcciones
     Route::get('/direcciones', [DireccionController::class, 'index']);
     Route::post('/direcciones', [DireccionController::class, 'store']);
+
+    // pedidos
+    Route::get('/pedidos', [PedidoController::class, 'index']);
+    Route::post('/pedidos', [PedidoController::class, 'store']);
+    Route::post('/pedidos/{pedido}/confirmar-pago', [PedidoController::class, 'confirmarPago']);
 });
