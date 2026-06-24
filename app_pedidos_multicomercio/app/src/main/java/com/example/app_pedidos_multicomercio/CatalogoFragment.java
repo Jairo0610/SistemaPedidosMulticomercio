@@ -1,5 +1,6 @@
 package com.example.app_pedidos_multicomercio;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,10 +17,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.app_pedidos_multicomercio.Adapters.CatalogoAdapter;
 import com.example.app_pedidos_multicomercio.Client.ApiClient;
+import com.example.app_pedidos_multicomercio.DataBase.AppDataBase;
 import com.example.app_pedidos_multicomercio.Models.Categoria;
 import com.example.app_pedidos_multicomercio.Models.Empresa;
 import com.example.app_pedidos_multicomercio.Models.Producto;
 import com.example.app_pedidos_multicomercio.Models.SubCategoria;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -33,6 +38,8 @@ public class CatalogoFragment extends Fragment {
     private ImageView imgLogoEmpresa;
     private RecyclerView rvProducto;
     private CatalogoAdapter catalogoAdapter;
+    private FloatingActionButton btnCarrito;
+    private BadgeDrawable badgeCarrito;
 
     private List<Producto> dataProducto;
     private List<SubCategoria> dataSubCategoria;
@@ -67,6 +74,16 @@ public class CatalogoFragment extends Fragment {
 
         imgLogoEmpresa = view.findViewById(R.id.imgLogoEmpresa);
 
+        // botón de arriba: regresa a la vista de inicio (cierra la pantalla del comercio)
+        view.findViewById(R.id.btnVolver).setOnClickListener(v -> requireActivity().finish());
+
+        // FAB del carrito: lleva al carrito y muestra un badge con las unidades
+        btnCarrito = view.findViewById(R.id.btnCarritoCatalogo);
+        btnCarrito.setOnClickListener(v -> irAlCarrito());
+
+        badgeCarrito = BadgeDrawable.create(requireContext());
+        btnCarrito.post(() -> BadgeUtils.attachBadgeDrawable(badgeCarrito, btnCarrito));
+
         idEmpresa = requireActivity().getIntent().getIntExtra("idEmpresa", 0);
 
         cargarDatosEmpresa();
@@ -74,6 +91,42 @@ public class CatalogoFragment extends Fragment {
         cargarProductos();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // al volver del detalle, refrescar el contador del carrito
+        actualizarBadgeCarrito();
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (badgeCarrito != null && btnCarrito != null) {
+            BadgeUtils.detachBadgeDrawable(badgeCarrito, btnCarrito);
+        }
+        super.onDestroyView();
+    }
+
+    private void actualizarBadgeCarrito() {
+        AppDataBase.databaseWriteExecutor.execute(() -> {
+            Integer total = AppDataBase.getInstance(requireContext()).producto_dao().sumarCantidades();
+            int unidades = total == null ? 0 : total;
+            if (!isAdded()) return;
+            requireActivity().runOnUiThread(() -> {
+                if (badgeCarrito == null) return;
+                badgeCarrito.setVisible(unidades > 0);
+                badgeCarrito.setNumber(unidades);
+            });
+        });
+    }
+
+    // vuelve a la sesión y selecciona la pestaña del carrito
+    private void irAlCarrito() {
+        Intent intent = new Intent(requireActivity(), SessionActivity.class);
+        intent.putExtra("abrir", "carrito");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
     private void cargarDatosEmpresa(){
         ApiClient.getApiService().getEmpresa(idEmpresa).enqueue(new Callback<Empresa>() {

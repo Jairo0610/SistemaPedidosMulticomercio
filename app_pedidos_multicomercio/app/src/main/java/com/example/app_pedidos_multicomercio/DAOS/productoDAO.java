@@ -20,6 +20,10 @@ public interface productoDAO {
     @Query("SELECT COUNT(*) FROM productos")
     int contarProductos();
 
+    // total de unidades en el carrito (suma de cantidades); null si está vacío
+    @Query("SELECT SUM(cantidad) FROM productos")
+    Integer sumarCantidades();
+
     // empresa del carrito (todos los items son de la misma); null si está vacío.
     @Query("SELECT empresaId FROM productos LIMIT 1")
     Integer getEmpresaEnCarrito();

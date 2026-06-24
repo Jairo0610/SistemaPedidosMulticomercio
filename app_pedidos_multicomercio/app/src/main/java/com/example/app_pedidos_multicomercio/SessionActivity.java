@@ -124,5 +124,23 @@ public class SessionActivity extends AppCompatActivity {
 
             return false;
         });
+
+        // si llegamos aquí pidiendo abrir el carrito (desde el FAB del catálogo)
+        abrirDesdeIntent(getIntent());
+    }
+
+    // cuando la activity ya existe y se reusa (FLAG_ACTIVITY_CLEAR_TOP | SINGLE_TOP)
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        abrirDesdeIntent(intent);
+    }
+
+    // selecciona la pestaña del carrito si el intent lo pide
+    private void abrirDesdeIntent(Intent intent) {
+        if (intent != null && "carrito".equals(intent.getStringExtra("abrir")) && navigationView != null) {
+            navigationView.setSelectedItemId(R.id.btnCarritoSession);
+        }
     }
 }
