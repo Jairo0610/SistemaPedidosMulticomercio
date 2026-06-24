@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    // Pago en línea con tarjeta en la app móvil, la clave secreta vive solo en el backend;
+    // la publicable la usa la app Android en su PaymentSheet.
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+    ],
+
 ];
