@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.example.app_pedidos_multicomercio.Util.SessionManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -71,6 +72,8 @@ public class PerfilFragment extends Fragment {
                 .into(imgPerfil);
 
         btnCerrarSession.setOnClickListener(v -> {
+            SessionManager.limpiar(requireContext());
+
             FirebaseAuth.getInstance().signOut();
 
             GoogleSignInClient googleSignInClient =
@@ -79,6 +82,7 @@ public class PerfilFragment extends Fragment {
             googleSignInClient.signOut();
 
             Intent intent = new Intent(requireActivity(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             requireActivity().finish();
         });

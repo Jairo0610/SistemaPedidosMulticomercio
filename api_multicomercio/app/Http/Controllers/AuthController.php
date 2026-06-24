@@ -21,7 +21,8 @@ class AuthController extends Controller
 
         // 1. Verificar el ID token contra Firebase y obtener los datos del usuario.
         try {
-            $verified = $firebaseAuth->verifyIdToken($request->input('id_token'));
+            // los 60 segundos dan margen por si el reloj del servidor va un poco atrasado
+            $verified = $firebaseAuth->verifyIdToken($request->input('id_token'), false, 60);
         } catch (FailedToVerifyToken $e) {
             return response()->json(['message' => 'ID token de Firebase inválido.'], 401);
         }
