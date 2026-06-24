@@ -11,6 +11,7 @@ import com.example.app_pedidos_multicomercio.Models.Empresa;
 import com.example.app_pedidos_multicomercio.Models.Pedido;
 import com.example.app_pedidos_multicomercio.Models.PedidoRequest;
 import com.example.app_pedidos_multicomercio.Models.Producto;
+import com.example.app_pedidos_multicomercio.Models.SubCategoria;
 
 import java.util.List;
 
@@ -24,6 +25,11 @@ public interface ApiService {
     // catálogo (público)
     @GET("categorias")
     Call<List<Categoria>> getCategorias();
+    @GET("subCategorias")
+    Call<List<SubCategoria>> getSubCategorias();
+
+    @GET("subCategorias/{id}")
+    Call<SubCategoria> getSubCategoria(@Path("id") int id);
 
     @GET("empresas")
     Call<List<Empresa>> getEmpresas();

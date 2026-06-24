@@ -23,11 +23,17 @@ public class EmpresaAdapter extends RecyclerView.Adapter<EmpresaAdapter.EmpresaV
     public Context context;
     public List<Empresa> dataEmpresa;
     public List<Categoria> dataCategoria;
+    public interface OnEmpresaClickListener {
+        void onEmpresaClick(Empresa empresa);
+    }
 
-    public EmpresaAdapter(Context context, List<Empresa> dataEmpresa, List<Categoria> dataCategoria) {
+    private OnEmpresaClickListener listener;
+
+    public EmpresaAdapter(Context context, List<Empresa> dataEmpresa, List<Categoria> dataCategoria, OnEmpresaClickListener listener) {
         this.context = context;
         this.dataEmpresa = dataEmpresa;
         this.dataCategoria = dataCategoria;
+        this.listener = listener;
     }
 
     @NonNull
@@ -50,7 +56,6 @@ public class EmpresaAdapter extends RecyclerView.Adapter<EmpresaAdapter.EmpresaV
         holder.idEmpresa = empresa.getId();
         holder.txtNombreComercio.setText(empresa.getNombre());
 
-
         if (dataCategoria != null) {
             for (Categoria item : dataCategoria) {
                 if (item.getId() == empresa.getCategoriaId()) {
@@ -59,6 +64,13 @@ public class EmpresaAdapter extends RecyclerView.Adapter<EmpresaAdapter.EmpresaV
                 }
             }
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onEmpresaClick(empresa);
+            }
+        });
+
     }
 
     @Override

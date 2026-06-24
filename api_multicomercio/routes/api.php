@@ -7,6 +7,7 @@ use App\Http\Controllers\DispositivoController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\SubCategoriaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,8 @@ Route::post('/auth/firebase', [AuthController::class, 'firebase']);
 
 // catálogo (público, solo lectura)
 Route::get('/categorias', [CategoriaController::class, 'index']);
+Route::get('/subCategorias', [SubCategoriaController::class, 'index']);
+Route::get('/subCategorias/{subcategoria}', [SubCategoriaController::class, 'show']);
 Route::get('/empresas', [EmpresaController::class, 'index']);
 Route::get('/empresas/{empresa}', [EmpresaController::class, 'show']);
 Route::get('/empresas/{empresa}/productos', [EmpresaController::class, 'productos']);
