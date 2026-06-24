@@ -25,6 +25,8 @@ class StorePedidoRequest extends FormRequest
             'items'                => ['required', 'array', 'min:1'],
             'items.*.producto_id'  => ['required', 'integer', 'exists:productos,id'],
             'items.*.cantidad'     => ['required', 'integer', 'min:1'],
+            // solo lo manda el POST /pedidos final (tras pagar); el intent no lo trae
+            'payment_intent_id'    => ['nullable', 'string'],
         ];
     }
 }

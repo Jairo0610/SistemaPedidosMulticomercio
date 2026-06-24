@@ -29,15 +29,103 @@ class PedidoController extends Controller
     }
 
     /**
-     * Crear un pedido (entrega a domicilio o pago con tarjeta)
-     * toma precios y dirección, lo deja en estado_pago=pendiente y crea el
-     * PaymentIntent de Stripe. La app paga con el client_secret y luego confirma.
+     * crea el PaymentIntent de Stripe SIN crear el pedido todavía
+     * la app muestra el PaymentSheet con este client_secret
+     *
+     * se llama con POST /api/pedidos/intent
+     */
+    public function intent(StorePedidoRequest $request)
+    {
+        $calc = $this->calcular($request->validated());
+        if ($calc instanceof \Illuminate\Http\JsonResponse) {
+            return $calc;
+        }
+
+        $stripe = new StripeClient(config('services.stripe.secret'));
+        $intent = $stripe->paymentIntents->create([
+            'amount'   => (int) round($calc['total'] * 100), // Stripe trabaja en centavos
+            'currency' => 'usd',
+            'metadata' => ['user_id' => $request->user()->id],
+        ]);
+
+        return response()->json([
+            'client_secret'     => $intent->client_secret,
+            'payment_intent_id' => $intent->id,
+            'total'             => $calc['total'],
+        ]);
+    }
+
+    /**
+     * crea el pedido SOLO si Stripe ya aprobó el cobro (status succeeded)
+     * si el pago no está completo, no se crea nada
      *
      * se crea con POST /api/pedidos
      */
     public function store(StorePedidoRequest $request)
     {
-        $datos     = $request->validated();
+        $datos = $request->validated();
+
+        if (empty($datos['payment_intent_id'])) {
+            return response()->json(['message' => 'Falta el identificador del pago.'], 422);
+        }
+
+        // verificar el pago en Stripe (no se confía en el cliente)
+        $stripe = new StripeClient(config('services.stripe.secret'));
+        $intent = $stripe->paymentIntents->retrieve($datos['payment_intent_id']);
+
+        if ($intent->status !== 'succeeded') {
+            return response()->json(['message' => 'El pago no se ha completado.'], 422);
+        }
+
+        $calc = $this->calcular($datos);
+        if ($calc instanceof \Illuminate\Http\JsonResponse) {
+            return $calc;
+        }
+
+        // el monto cobrado debe coincidir con el total recalculado
+        if ((int) $intent->amount !== (int) round($calc['total'] * 100)) {
+            return response()->json(['message' => 'El monto pagado no coincide con el total.'], 422);
+        }
+
+        $pedido = DB::transaction(function () use ($datos, $request, $calc, $intent) {
+            $pedido = Pedido::create([
+                'numero'            => $this->generarNumero(),
+                'user_id'           => $request->user()->id,
+                'empresa_id'        => $calc['empresa']->id,
+                'sucursal_id'       => $calc['sucursal']->id,
+                'modalidad_entrega' => 'domicilio',
+                'metodo_pago'       => 'tarjeta',
+                'estado_entrega'    => 'nuevo',
+                'estado_pago'       => 'pagado',
+                'total'             => $calc['total'],
+                // la dirección se copia (congela), no apunta a la libreta
+                'direccion_entrega' => $calc['direccion']->direccion,
+                'latitud_entrega'   => $calc['direccion']->latitud,
+                'longitud_entrega'  => $calc['direccion']->longitud,
+                'stripe_payment_id' => $intent->id,
+            ]);
+
+            $pedido->detalles()->createMany($calc['lineas']);
+            $pedido->historialEstados()->create([
+                'estado'      => 'nuevo',
+                'observacion' => 'Pedido creado y pagado con tarjeta (Stripe).',
+            ]);
+
+            return $pedido;
+        });
+
+        return response()->json(
+            $pedido->load(['detalles.producto:id,nombre', 'empresa:id,nombre']),
+            201
+        );
+    }
+
+    /**
+     * valida empresa, sucursal y productos, y calcula el total con precios congelados
+     * (promoción vigente aplicada). Devuelve los datos o una respuesta de error 422.
+     */
+    private function calcular(array $datos)
+    {
         $empresa   = Empresa::findOrFail($datos['empresa_id']);
         $direccion = Direccion::findOrFail($datos['direccion_id']);
 
@@ -47,112 +135,41 @@ class PedidoController extends Controller
             return response()->json(['message' => 'La empresa no tiene sucursales disponibles.'], 422);
         }
 
-        // Cargar de golpe los productos pedidos.
         $ids       = collect($datos['items'])->pluck('producto_id');
         $productos = Producto::whereIn('id', $ids)->get()->keyBy('id');
 
-        // Todos los productos deben ser de la empresa elegida (carrito = una empresa).
-        foreach ($productos as $producto) {
+        $total  = 0;
+        $lineas = [];
+        foreach ($datos['items'] as $item) {
+            $producto = $productos[$item['producto_id']];
+
+            // todos los productos deben ser de la empresa elegida (carrito = una empresa)
             if ((int) $producto->empresa_id !== (int) $empresa->id) {
                 return response()->json([
                     'message' => 'Todos los productos deben pertenecer a la misma empresa.',
                 ], 422);
             }
+
+            // precio congelado = precio actual con promoción vigente aplicada
+            $precio   = $this->precioVigente($producto);
+            $subtotal = $precio * $item['cantidad'];
+            $total   += $subtotal;
+
+            $lineas[] = [
+                'producto_id'     => $producto->id,
+                'cantidad'        => $item['cantidad'],
+                'precio_unitario' => $precio,
+                'subtotal'        => $subtotal,
+            ];
         }
 
-        $pedido = DB::transaction(function () use ($datos, $request, $empresa, $sucursal, $direccion, $productos) {
-            $total   = 0;
-            $lineas  = [];
-
-            foreach ($datos['items'] as $item) {
-                $producto = $productos[$item['producto_id']];
-                // Precio congelado = precio actual con promoción vigente aplicada.
-                $precio   = $this->precioVigente($producto);
-                $subtotal = $precio * $item['cantidad'];
-                $total   += $subtotal;
-
-                $lineas[] = [
-                    'producto_id'     => $producto->id,
-                    'cantidad'        => $item['cantidad'],
-                    'precio_unitario' => $precio,
-                    'subtotal'        => $subtotal,
-                ];
-            }
-
-            $pedido = Pedido::create([
-                'numero'            => $this->generarNumero(),
-                'user_id'           => $request->user()->id,
-                'empresa_id'        => $empresa->id,
-                'sucursal_id'       => $sucursal->id,
-                'modalidad_entrega' => 'domicilio',
-                'metodo_pago'       => 'tarjeta',
-                'estado_entrega'    => 'nuevo',
-                'estado_pago'       => 'pendiente',
-                'total'             => $total,
-                // toma la dirección,  se copian, no apunta a la libreta
-                'direccion_entrega' => $direccion->direccion,
-                'latitud_entrega'   => $direccion->latitud,
-                'longitud_entrega'  => $direccion->longitud,
-            ]);
-
-            $pedido->detalles()->createMany($lineas);
-            $pedido->historialEstados()->create([
-                'estado'      => 'nuevo',
-                'observacion' => 'Pedido creado desde la app.',
-            ]);
-
-            return $pedido;
-        });
-
-        // crear el PaymentIntent en Stripe por el total del pedido
-        $stripe = new StripeClient(config('services.stripe.secret'));
-        $intent = $stripe->paymentIntents->create([
-            'amount'   => (int) round($pedido->total * 100), // Stripe trabaja en centavos
-            'currency' => 'usd',
-            'metadata' => ['pedido_id' => $pedido->id],
-        ]);
-
-        // guardamos el id del PaymentIntent para verificar el pago al confirmar.
-        $pedido->update(['stripe_payment_id' => $intent->id]);
-
-        return response()->json([
-            'pedido_id'     => $pedido->id,
-            'numero'        => $pedido->numero,
-            'total'         => $pedido->total,
-            'client_secret' => $intent->client_secret,
-        ], 201);
-    }
-
-    /**
-     * confirmar el pago tras cobrar en la app, el backend consulta el PaymentIntent
-     * en Stripe (no confía en el cliente) y, si está pagado, marca el pedido
-     *
-     * se confirma con POST /api/pedidos/{pedido}/confirmar-pago
-     */
-    public function confirmarPago(Request $request, Pedido $pedido)
-    {
-        // Solo el dueño del pedido puede confirmarlo.
-        abort_unless($pedido->user_id === $request->user()->id, 403);
-
-        if (! $pedido->stripe_payment_id) {
-            return response()->json(['message' => 'El pedido no tiene un pago asociado.'], 422);
-        }
-
-        $stripe = new StripeClient(config('services.stripe.secret'));
-        $intent = $stripe->paymentIntents->retrieve($pedido->stripe_payment_id);
-
-        if ($intent->status !== 'succeeded') {
-            return response()->json([
-                'message' => 'El pago aún no se ha completado.',
-                'estado'  => $intent->status,
-            ], 422);
-        }
-
-        if ($pedido->estado_pago !== 'pagado') {
-            $pedido->cambiarEstado('estado_pago', 'pagado', 'Pago confirmado con tarjeta (Stripe).');
-        }
-
-        return response()->json($pedido->load(['detalles.producto:id,nombre', 'empresa:id,nombre']));
+        return [
+            'empresa'   => $empresa,
+            'sucursal'  => $sucursal,
+            'direccion' => $direccion,
+            'total'     => $total,
+            'lineas'    => $lineas,
+        ];
     }
 
     /**

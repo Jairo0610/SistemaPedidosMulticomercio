@@ -34,8 +34,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // pedidos
     Route::get('/pedidos', [PedidoController::class, 'index']);
-    Route::post('/pedidos', [PedidoController::class, 'store']);
-    Route::post('/pedidos/{pedido}/confirmar-pago', [PedidoController::class, 'confirmarPago']);
+    Route::post('/pedidos/intent', [PedidoController::class, 'intent']); // crea el PaymentIntent, sin pedido
+    Route::post('/pedidos', [PedidoController::class, 'store']);          // crea el pedido solo si ya se pagó
 
     // registro del token FCM para notificaciones push
     Route::post('/dispositivos', [DispositivoController::class, 'store']);
