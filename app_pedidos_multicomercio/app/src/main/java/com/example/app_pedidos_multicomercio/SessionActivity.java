@@ -1,5 +1,6 @@
 package com.example.app_pedidos_multicomercio;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -10,9 +11,11 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.app_pedidos_multicomercio.DataBase.AppDataBase;
+import com.example.app_pedidos_multicomercio.Util.SessionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.stripe.android.PaymentConfiguration;
 
 public class SessionActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -52,6 +55,23 @@ public class SessionActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        // Cargar el token de Sanctum guardado para que el interceptor lo use
+        SessionManager.init(this);
+
+        // Si no hay token Sanctum (sesión de Firebase anterior a este flujo, o token
+        // limpiado), cerramos Firebase y mandamos al login para que el intercambio
+        // ocurra de forma síncrona antes de entrar a la app.
+        if (SessionManager.getToken() == null) {
+            mAuth.signOut();
+            Intent loginIntent = new Intent(this, MainActivity.class);
+            loginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(loginIntent);
+            finish();
+            return;
+        }
+
+        // Inicializar Stripe con la clave publicable
+        PaymentConfiguration.init(getApplicationContext(), getString(R.string.stripe_publishable_key));
 
         //db_conn = AppDataBase.getInstance(getApplicationContext());
 

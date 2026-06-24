@@ -28,6 +28,15 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import com.example.app_pedidos_multicomercio.Client.ApiClient;
+import com.example.app_pedidos_multicomercio.Models.AuthRequest;
+import com.example.app_pedidos_multicomercio.Models.AuthResponse;
+import com.example.app_pedidos_multicomercio.Util.SessionManager;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class LoginFragment extends Fragment {
 
@@ -196,19 +205,60 @@ public class LoginFragment extends Fragment {
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            String nombre = user.getDisplayName() != null
-                    ? user.getDisplayName()
-                    : user.getEmail();
-
-            Toast.makeText(getContext(),
-                    "¡Bienvenido " + nombre + "!", Toast.LENGTH_SHORT).show();
-
-            Intent intent = new Intent(requireActivity(), SessionActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            // El login de Firebase fue correcto. Antes de entrar, canjeamos su ID token
+            // por un token de Sanctum del backend (es el que autoriza las peticiones).
+            canjearTokenYEntrar(user);
         } else {
             txtEmail.setText("");
             txtPass.setText("");
         }
+    }
+
+    /**
+     * Pide el ID token a Firebase, lo envía a POST /api/auth/firebase y, si el backend
+     * responde con un token de Sanctum, lo guarda y abre la sesión.
+     */
+    private void canjearTokenYEntrar(FirebaseUser user) {
+        String nombre = user.getDisplayName() != null ? user.getDisplayName() : user.getEmail();
+
+        user.getIdToken(true).addOnCompleteListener(tokenTask -> {
+            if (!tokenTask.isSuccessful() || tokenTask.getResult().getToken() == null) {
+                Toast.makeText(getContext(), "No se pudo obtener el token de Firebase", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String idToken = tokenTask.getResult().getToken();
+
+            ApiClient.getApiService().authFirebase(new AuthRequest(idToken))
+                    .enqueue(new Callback<AuthResponse>() {
+                        @Override
+                        public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                            if (!isAdded()) return;
+
+                            if (response.isSuccessful() && response.body() != null) {
+                                SessionManager.guardarToken(requireContext(), response.body().getToken());
+
+                                Toast.makeText(getContext(),
+                                        "¡Bienvenido " + nombre + "!", Toast.LENGTH_SHORT).show();
+
+                                Intent intent = new Intent(requireActivity(), SessionActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(getContext(),
+                                        "El servidor rechazó el inicio de sesión (" + response.code() + ")",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<AuthResponse> call, Throwable t) {
+                            if (!isAdded()) return;
+                            Toast.makeText(getContext(),
+                                    "Error de red al iniciar sesión: " + t.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
     }
 }
