@@ -36,12 +36,11 @@ class ViewPedido extends ViewRecord
                 ])
                 ->fillForm(fn () => ['estado_entrega' => $this->getRecord()->estado_entrega])
                 ->action(function (array $data): void {
-                    $record = $this->getRecord();
-                    $record->update(['estado_entrega' => $data['estado_entrega']]);
-                    $record->historialEstados()->create([
-                        'estado'      => $data['estado_entrega'],
-                        'observacion' => $data['observacion'] ?? null,
-                    ]);
+                    $this->getRecord()->cambiarEstado(
+                        'estado_entrega',
+                        $data['estado_entrega'],
+                        $data['observacion'] ?? null,
+                    );
                     $this->refreshFormData(['estado_entrega']);
                 }),
 
@@ -63,12 +62,11 @@ class ViewPedido extends ViewRecord
                 ])
                 ->fillForm(fn () => ['estado_pago' => $this->getRecord()->estado_pago])
                 ->action(function (array $data): void {
-                    $record = $this->getRecord();
-                    $record->update(['estado_pago' => $data['estado_pago']]);
-                    $record->historialEstados()->create([
-                        'estado'      => $data['estado_pago'],
-                        'observacion' => $data['observacion'] ?? null,
-                    ]);
+                    $this->getRecord()->cambiarEstado(
+                        'estado_pago',
+                        $data['estado_pago'],
+                        $data['observacion'] ?? null,
+                    );
                     $this->refreshFormData(['estado_pago']);
                 }),
         ];

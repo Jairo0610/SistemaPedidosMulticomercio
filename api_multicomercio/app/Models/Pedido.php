@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\NotificacionService;
 use Illuminate\Database\Eloquent\Model;
 
 class Pedido extends Model
@@ -56,5 +57,19 @@ class Pedido extends Model
     public function notificaciones()
     {
         return $this->hasMany(Notificacion::class);
+    }
+
+    // cambia un estado (entrega o pago), registra el historial y notifica al cliente
+    // $campo es 'estado_entrega' o 'estado_pago'
+    public function cambiarEstado(string $campo, string $valor, ?string $observacion = null): void
+    {
+        $this->update([$campo => $valor]);
+
+        $this->historialEstados()->create([
+            'estado'      => $valor,
+            'observacion' => $observacion,
+        ]);
+
+        app(NotificacionService::class)->pedidoEstadoCambiado($this, $campo, $valor);
     }
 }

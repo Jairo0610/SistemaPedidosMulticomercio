@@ -149,11 +149,7 @@ class PedidoController extends Controller
         }
 
         if ($pedido->estado_pago !== 'pagado') {
-            $pedido->update(['estado_pago' => 'pagado']);
-            $pedido->historialEstados()->create([
-                'estado'      => 'pagado',
-                'observacion' => 'Pago confirmado con tarjeta (Stripe).',
-            ]);
+            $pedido->cambiarEstado('estado_pago', 'pagado', 'Pago confirmado con tarjeta (Stripe).');
         }
 
         return response()->json($pedido->load(['detalles.producto:id,nombre', 'empresa:id,nombre']));

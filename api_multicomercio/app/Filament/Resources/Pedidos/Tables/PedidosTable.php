@@ -95,11 +95,11 @@ class PedidosTable
                     ])
                     ->fillForm(fn ($record) => ['estado_entrega' => $record->estado_entrega])
                     ->action(function ($record, array $data): void {
-                        $record->update(['estado_entrega' => $data['estado_entrega']]);
-                        $record->historialEstados()->create([
-                            'estado'      => $data['estado_entrega'],
-                            'observacion' => $data['observacion'] ?? null,
-                        ]);
+                        $record->cambiarEstado(
+                            'estado_entrega',
+                            $data['estado_entrega'],
+                            $data['observacion'] ?? null,
+                        );
                     }),
 
                 Action::make('cambiar_estado_pago')
@@ -120,11 +120,11 @@ class PedidosTable
                     ])
                     ->fillForm(fn ($record) => ['estado_pago' => $record->estado_pago])
                     ->action(function ($record, array $data): void {
-                        $record->update(['estado_pago' => $data['estado_pago']]);
-                        $record->historialEstados()->create([
-                            'estado'      => $data['estado_pago'],
-                            'observacion' => $data['observacion'] ?? null,
-                        ]);
+                        $record->cambiarEstado(
+                            'estado_pago',
+                            $data['estado_pago'],
+                            $data['observacion'] ?? null,
+                        );
                     }),
             ]);
     }

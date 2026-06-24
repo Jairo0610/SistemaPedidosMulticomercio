@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DireccionController;
+use App\Http\Controllers\DispositivoController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
@@ -32,4 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/pedidos', [PedidoController::class, 'index']);
     Route::post('/pedidos', [PedidoController::class, 'store']);
     Route::post('/pedidos/{pedido}/confirmar-pago', [PedidoController::class, 'confirmarPago']);
+
+    // registro del token FCM para notificaciones push
+    Route::post('/dispositivos', [DispositivoController::class, 'store']);
 });
