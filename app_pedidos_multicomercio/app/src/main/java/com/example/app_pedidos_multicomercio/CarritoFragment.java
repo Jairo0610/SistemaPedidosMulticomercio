@@ -264,7 +264,9 @@ public class CarritoFragment extends Fragment implements CarritoAdapter.OnCarrit
                             paymentIntentId = response.body().getPaymentIntentId();
                             presentarPago(response.body().getClientSecret());
                         } else {
-                            Toast.makeText(getContext(), "No se pudo iniciar el pago (" + response.code() + ")", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),
+                                    mensajeError(response, "No se pudo iniciar el pago (" + response.code() + ")"),
+                                    Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -309,7 +311,9 @@ public class CarritoFragment extends Fragment implements CarritoAdapter.OnCarrit
                     Toast.makeText(getContext(), "¡Pedido realizado con éxito!", Toast.LENGTH_LONG).show();
                     irAPedidos();
                 } else {
-                    Toast.makeText(getContext(), "El pago se hizo pero no se pudo registrar el pedido (" + response.code() + ")", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(),
+                            mensajeError(response, "El pago se hizo pero no se pudo registrar el pedido (" + response.code() + ")"),
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -318,6 +322,19 @@ public class CarritoFragment extends Fragment implements CarritoAdapter.OnCarrit
                 if (isAdded()) Toast.makeText(getContext(), "Error de red al registrar el pedido", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /* saca el campo "message" del cuerpo de error del backend; si no se puede, usa el texto por defecto */
+    private String mensajeError(Response<?> response, String porDefecto) {
+        try {
+            if (response.errorBody() != null) {
+                String cuerpo = response.errorBody().string();
+                String msg = new org.json.JSONObject(cuerpo).optString("message", "");
+                if (!msg.isEmpty()) return msg;
+            }
+        } catch (Exception ignored) {
+        }
+        return porDefecto;
     }
 
     private void irAPedidos() {

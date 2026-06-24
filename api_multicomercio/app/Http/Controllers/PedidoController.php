@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePedidoRequest;
 use App\Models\Direccion;
+use App\Models\Disponibilidad;
 use App\Models\Empresa;
 use App\Models\Pedido;
 use App\Models\Producto;
@@ -87,32 +88,57 @@ class PedidoController extends Controller
             return response()->json(['message' => 'El monto pagado no coincide con el total.'], 422);
         }
 
-        $pedido = DB::transaction(function () use ($datos, $request, $calc, $intent) {
-            $pedido = Pedido::create([
-                'numero'            => $this->generarNumero(),
-                'user_id'           => $request->user()->id,
-                'empresa_id'        => $calc['empresa']->id,
-                'sucursal_id'       => $calc['sucursal']->id,
-                'modalidad_entrega' => 'domicilio',
-                'metodo_pago'       => 'tarjeta',
-                'estado_entrega'    => 'nuevo',
-                'estado_pago'       => 'pagado',
-                'total'             => $calc['total'],
-                // la dirección se copia (congela), no apunta a la libreta
-                'direccion_entrega' => $calc['direccion']->direccion,
-                'latitud_entrega'   => $calc['direccion']->latitud,
-                'longitud_entrega'  => $calc['direccion']->longitud,
-                'stripe_payment_id' => $intent->id,
-            ]);
+        try {
+            $pedido = DB::transaction(function () use ($datos, $request, $calc, $intent) {
+                // bloquear y re-verificar el stock por si cambió mientras se pagaba
+                foreach ($calc['lineas'] as $linea) {
+                    $disp = Disponibilidad::where('sucursal_id', $calc['sucursal']->id)
+                        ->where('producto_id', $linea['producto_id'])
+                        ->lockForUpdate()
+                        ->first();
+                    if (! $disp || ! $disp->disponible || $disp->stock < $linea['cantidad']) {
+                        throw new \RuntimeException('sin_stock');
+                    }
+                }
 
-            $pedido->detalles()->createMany($calc['lineas']);
-            $pedido->historialEstados()->create([
-                'estado'      => 'nuevo',
-                'observacion' => 'Pedido creado y pagado con tarjeta (Stripe).',
-            ]);
+                $pedido = Pedido::create([
+                    'numero'            => $this->generarNumero(),
+                    'user_id'           => $request->user()->id,
+                    'empresa_id'        => $calc['empresa']->id,
+                    'sucursal_id'       => $calc['sucursal']->id,
+                    'modalidad_entrega' => 'domicilio',
+                    'metodo_pago'       => 'tarjeta',
+                    'estado_entrega'    => 'nuevo',
+                    'estado_pago'       => 'pagado',
+                    'total'             => $calc['total'],
+                    // la dirección se copia (congela), no apunta a la libreta
+                    'direccion_entrega' => $calc['direccion']->direccion,
+                    'latitud_entrega'   => $calc['direccion']->latitud,
+                    'longitud_entrega'  => $calc['direccion']->longitud,
+                    'stripe_payment_id' => $intent->id,
+                ]);
 
-            return $pedido;
-        });
+                $pedido->detalles()->createMany($calc['lineas']);
+                $pedido->historialEstados()->create([
+                    'estado'      => 'nuevo',
+                    'observacion' => 'Pedido creado y pagado con tarjeta (Stripe).',
+                ]);
+
+                // descontar el stock de la sucursal que atiende el pedido
+                foreach ($calc['lineas'] as $linea) {
+                    Disponibilidad::where('sucursal_id', $calc['sucursal']->id)
+                        ->where('producto_id', $linea['producto_id'])
+                        ->decrement('stock', $linea['cantidad']);
+                }
+
+                return $pedido;
+            });
+        } catch (\RuntimeException $e) {
+            // caso raro: el stock se agotó entre el pago y la confirmación
+            return response()->json([
+                'message' => 'El stock se agotó durante el pago. Comunícate con la empresa.',
+            ], 409);
+        }
 
         return response()->json(
             $pedido->load(['detalles.producto:id,nombre', 'empresa:id,nombre']),
@@ -147,6 +173,16 @@ class PedidoController extends Controller
             if ((int) $producto->empresa_id !== (int) $empresa->id) {
                 return response()->json([
                     'message' => 'Todos los productos deben pertenecer a la misma empresa.',
+                ], 422);
+            }
+
+            // debe haber stock suficiente en la sucursal que atiende el pedido
+            $disp = Disponibilidad::where('sucursal_id', $sucursal->id)
+                ->where('producto_id', $producto->id)
+                ->first();
+            if (! $disp || ! $disp->disponible || $disp->stock < $item['cantidad']) {
+                return response()->json([
+                    'message' => "No hay stock suficiente de \"{$producto->nombre}\".",
                 ], 422);
             }
 
