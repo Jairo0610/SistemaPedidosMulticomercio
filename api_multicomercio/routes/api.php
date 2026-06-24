@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\SubCategoriaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\ProductoController;
@@ -21,3 +21,7 @@ Route::get('/empresas/{empresa}/productos', [EmpresaController::class, 'producto
 Route::get('/productos', [ProductoController::class, 'index']);
 
 Route::get('/productos/{producto}', [ProductoController::class, 'show']);
+
+Route::get('/subCategorias', [SubCategoriaController::class, 'index']);
+
+Route::get('/subCategorias/{subcategoria}', [SubCategoriaController::class, 'show']);

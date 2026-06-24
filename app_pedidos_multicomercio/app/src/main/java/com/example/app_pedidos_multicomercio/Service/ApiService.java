@@ -3,6 +3,7 @@ package com.example.app_pedidos_multicomercio.Service;
 import com.example.app_pedidos_multicomercio.Models.Categoria;
 import com.example.app_pedidos_multicomercio.Models.Empresa;
 import com.example.app_pedidos_multicomercio.Models.Producto;
+import com.example.app_pedidos_multicomercio.Models.SubCategoria;
 
 import java.util.List;
 
@@ -13,6 +14,11 @@ import retrofit2.http.Path;
 public interface ApiService {
     @GET("categorias")
     Call<List<Categoria>> getCategorias();
+    @GET("subCategorias")
+    Call<List<SubCategoria>> getSubCategorias();
+
+    @GET("subCategorias/{id}")
+    Call<SubCategoria> getSubCategoria(@Path("id") int id);
 
     @GET("empresas")
     Call<List<Empresa>> getEmpresas();

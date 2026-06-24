@@ -1,5 +1,6 @@
 package com.example.app_pedidos_multicomercio;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.app_pedidos_multicomercio.Adapters.EmpresaAdapter;
 import com.example.app_pedidos_multicomercio.Client.ApiClient;
@@ -25,6 +27,7 @@ import retrofit2.Response;
 
 public class InicioFragment extends Fragment {
     private RecyclerView rvEmpresas;
+    private ProgressBar progressSucursales;
     private EmpresaAdapter empresaAdapter;
     private ApiService apiService;
 
@@ -53,6 +56,7 @@ public class InicioFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_inicio, container, false);
 
         rvEmpresas = view.findViewById(R.id.rvEmpresas);
+        progressSucursales = view.findViewById(R.id.progressSucursales);
         rvEmpresas.setLayoutManager(new LinearLayoutManager(requireActivity()));
 
         cargarDatosEmpresa();
@@ -76,7 +80,14 @@ public class InicioFragment extends Fragment {
                             if (response.isSuccessful() && response.body() != null) {
                                 dataCategoria = response.body();
                                 Log.i("Categoria", "" + dataCategoria.size());
-                                empresaAdapter = new EmpresaAdapter(requireActivity(), dataEmpresa, dataCategoria);
+                                empresaAdapter = new EmpresaAdapter(requireActivity(), dataEmpresa, dataCategoria, empresa -> {
+                                    Intent intent = new Intent(requireActivity(), ComercioActivity.class);
+                                    intent.putExtra("idEmpresa", empresa.getId());
+                                    startActivity(intent);
+
+
+                                });
+                                progressSucursales.setVisibility(View.GONE);
                                 rvEmpresas.setAdapter(empresaAdapter);
                             }
                         }
