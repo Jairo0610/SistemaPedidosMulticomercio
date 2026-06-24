@@ -7,9 +7,7 @@
     android:background="@color/background"
     tools:context=".PedidosFragment">
 
-    <!-- ══════════════════════════════════════
-         TÍTULO
-    ══════════════════════════════════════ -->
+    <!-- título -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,9 +35,7 @@
 
     </LinearLayout>
 
-    <!-- ══════════════════════════════════════
-         LISTA DE PEDIDOS
-    ══════════════════════════════════════ -->
+    <!-- lista de pedidos -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPedidos"
         android:layout_width="match_parent"

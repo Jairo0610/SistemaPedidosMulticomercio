@@ -2,63 +2,66 @@ package com.example.app_pedidos_multicomercio;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link PedidosFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.app_pedidos_multicomercio.Adapters.PedidoAdapter;
+import com.example.app_pedidos_multicomercio.Client.ApiClient;
+import com.example.app_pedidos_multicomercio.Models.Pedido;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+/* historial de pedidos del cliente */
 public class PedidosFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private RecyclerView rvPedidos;
+    private TextView txtCantidadPedidos;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public PedidosFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PedidosFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PedidosFragment newInstance(String param1, String param2) {
-        PedidosFragment fragment = new PedidosFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    public PedidosFragment() { }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_pedidos, container, false);
+
+        rvPedidos = view.findViewById(R.id.rvPedidos);
+        txtCantidadPedidos = view.findViewById(R.id.txtCantidadPedidos);
+        rvPedidos.setLayoutManager(new LinearLayoutManager(requireActivity()));
+
+        cargarPedidos();
+        return view;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pedidos, container, false);
+    private void cargarPedidos() {
+        ApiClient.getApiService().getPedidos().enqueue(new Callback<List<Pedido>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Pedido>> call, @NonNull Response<List<Pedido>> response) {
+                if (!isAdded()) return;
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Pedido> pedidos = response.body();
+                    rvPedidos.setAdapter(new PedidoAdapter(requireActivity(), pedidos));
+                    txtCantidadPedidos.setText(pedidos.size()
+                            + (pedidos.size() == 1 ? " pedido realizado" : " pedidos realizados"));
+                } else {
+                    Log.e("Pedidos", "Respuesta no exitosa: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Pedido>> call, @NonNull Throwable t) {
+                Log.e("Pedidos", "Error al cargar", t);
+            }
+        });
     }
 }

@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- ── Fila superior: imagen + info + badge ── -->
+        <!-- fila superior imagen + info + badge -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -139,7 +139,7 @@
             android:layout_height="1dp"
             android:background="@color/outline_variant" />
 
-        <!-- ── Fila inferior: acciones ── -->
+        <!-- fila inferior acciones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

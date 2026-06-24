@@ -33,7 +33,7 @@
                 android:textSize="14sp"
                 tools:text="Burger Palace · 1 producto" />
 
-            <!-- ── Lista de productos ── -->
+            <!-- lista de productos -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerCarrito"
                 android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                 tools:itemCount="1"
                 tools:listitem="@layout/item_carrito" />
 
-            <!-- ── Modalidad de entrega ── -->
+            <!-- modalidad de entrega -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -136,47 +136,36 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
+                    android:orientation="vertical"
                     android:padding="16dp">
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginEnd="12dp"
-                        android:src="@android:drawable/ic_menu_mylocation" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:text="Dirección de entrega"
+                        android:textSize="12sp"
+                        android:layout_marginBottom="4dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Dirección de entrega"
-                            android:textSize="12sp" />
+                    <!-- Selector de la dirección guardada -->
+                    <Spinner
+                        android:id="@+id/spinnerDirecciones"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-                        <TextView
-                            android:id="@+id/txtDireccionEntrega"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            tools:text="Av. Masferrer Norte 168" />
-
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_flecha" />
+                    <TextView
+                        android:id="@+id/btnAgregarDireccion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="+ Agregar dirección"
+                        android:textStyle="bold"
+                        android:textColor="@color/brand_orange"
+                        android:padding="4dp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- ── Método de pago ── -->
+            <!-- método de pago -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -244,7 +233,7 @@
 
             </LinearLayout>
 
-            <!-- ── Resumen de costos ── -->
+            <!-- resumen de costos -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -356,6 +345,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- ── Botón confirmar fijo abajo ── -->
+    <!-- botón confirmar fijo abajo -->
 
 </LinearLayout>
