@@ -60,4 +60,20 @@ class Producto extends Model
     {
         return $this->hasMany(Favorito::class);
     }
+
+    // devuelve la URL pública de Firebase a partir de la ruta guardada,
+    // así la app puede cargar la imagen directamente con Glide
+    protected function getImagenUrlAttribute(?string $value): ?string
+    {
+        if (! $value) {
+            return null;
+        }
+        // si ya viene como URL completa (datos antiguos), se deja igual
+        if (str_starts_with($value, 'http')) {
+            return $value;
+        }
+        $bucket = config('filesystems.disks.firebase.bucket');
+        return 'https://firebasestorage.googleapis.com/v0/b/'
+            . $bucket . '/o/' . rawurlencode($value) . '?alt=media';
+    }
 }

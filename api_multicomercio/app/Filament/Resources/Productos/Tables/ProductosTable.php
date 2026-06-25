@@ -21,12 +21,8 @@ class ProductosTable
             ->columns([
                 ImageColumn::make('imagen_url')
                     ->label('Imagen')
-                    ->getStateUsing(fn ($record) => $record->imagen_url
-                        ? 'https://firebasestorage.googleapis.com/v0/b/'
-                            . config('filesystems.disks.firebase.bucket')
-                            . '/o/' . rawurlencode($record->imagen_url)
-                            . '?alt=media'
-                        : null)
+                    // imagen_url ya viene como URL pública completa (accessor del modelo)
+                    ->getStateUsing(fn ($record) => $record->imagen_url)
                     ->extraImgAttributes([
                         'style' => 'background:#ffffff;border-radius:8px;padding:6px;object-fit:contain;',
                     ]),

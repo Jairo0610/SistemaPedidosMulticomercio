@@ -10,8 +10,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 
@@ -61,10 +61,8 @@ class ProductoForm
                         if (!$record?->imagen_url) {
                             return 'Sin imagen';
                         }
-                        $bucket = config('filesystems.disks.firebase.bucket');
-                        $url = 'https://firebasestorage.googleapis.com/v0/b/'
-                            . $bucket . '/o/' . rawurlencode($record->imagen_url)
-                            . '?alt=media';
+                        // imagen_url ya es la URL pública completa (accessor del modelo)
+                        $url = $record->imagen_url;
                         return new HtmlString(
                             '<style>.img-prod-pv{background:#fff}.dark .img-prod-pv{background:#374151}</style>'
                             . '<div class="img-prod-pv" style="display:inline-flex;border-radius:8px;padding:6px;">'
